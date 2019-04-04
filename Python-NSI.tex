@@ -1,0 +1,735 @@
+\documentclass[12pt]{article}
+\usepackage{monpaquet}
+\usepackage{tabto}
+
+
+\begin{document}
+\pagestyle{fancy}
+\cfoot{\lpgdg\ - \thepage}
+\lhead{Seconde}
+\chead{\textsc{\textbf{Accompagnement personnalisé}}}
+\rhead{}%indiquer l'année scolaire
+
+\begin{center}
+\begin{Large}
+\textbf{\textsc{Spécialité NSI et programmation Python}}\\\textsf{Initiation à la cryptographie}
+\end{Large}
+\end{center}
+
+L'objectif de cette session d'AP est d'apercevoir au travers d'un TP sur plusieurs séances, quelques notions qui seront développées en première dans la spécialité NSI : Numérique et sciences informatiques.
+
+J'ai choisi comme support le cryptosystème de Merkle-Hellman\footnote{\url{https://fr.wikipedia.org/wiki/Cryptosyst\%C3\%A8me_de_Merkle-Hellman}}, pour lequel il faudra s'initier aux notions suivantes :
+\begin{itemize}
+\item la numération binaire, hexadécimale et encodage des caractères ;
+\item conception d'algorithmes de conversion de base ;
+\item programmation de ces algorithmes en Python ;
+\item notion de fonction en programmation ;
+\item les différents types de données en Python et manipulation de ces objets ;
+\item gestion des fichiers en Python ;
+\end{itemize}
+
+Merkle-Hellman est un cryptosystème asymétrique : la clé publique est utilisée pour le chiffrement, et la clé privée pour le déchiffrement.
+
+\begin{center}
+\includegraphics[width=7cm]{asymetrique.eps} 
+\end{center}
+
+Nous travaillerons de manière progressive et guidée avec pour objectif de produire un programme Python générant des clefs privées et publiques, capable également de coder et décoder un message que vous vous échangerez à travers une messagerie. 
+
+\newpage
+
+\section{Les systèmes de numération et l'encodage des caractères}
+\flqq Un ordinateur est une machine qui manipule des valeurs numériques représentées sous forme binaire.\frqq
+\subsection{Numération binaire}
+Dans l'écriture décimale des nombres, nous utilisons dix chiffres : 0, 1, 2, 3, 4, 5, 6, 7, 8 et 9 : si $a$, $b$ et $c$ sont des chiffres décimaux, le nombre $abc_{10}$ est $a\times10^2+b\times10^1+c\times10^0$.
+
+\begin{exemple} $207=2\times10^2+0\times10^1+7\times10^0$.\end{exemple}
+
+En binaire, nous n'utilisons que deux chiffres : 0 et 1 (ce qui convient parfaitement à l'informatique : les processeurs des ordinateurs sont composés de transistors ne gérant chacun que deux états) : les chiffres s'appellent les \textbf{bits} : si $a$, $b$ et $c$ sont des bits, le nombre $abc_2$ est $a\times2^2+b\times2^1+c\times2^0$.
+
+\begin{exemple} $101_2=1\times2^2+0\times2^1+1\times2^0=5_{10}$.\end{exemple}
+
+\exercice
+\begin{enumerate}
+\item Écrire les huit premières puissances de $2$ : \begin{tabular}{*{9}{|c}|}\hline
+\textbf{$n$}\fractab & 0&1&2&3&4&5&6&7\\\hline
+\textbf{$2^n$}\fractab& & & & & & & & \\\hline
+\end{tabular}
+	\item Écrire en base $10$, les nombres binaires $111_2$, $1\,0000_2$ et $1111\,1111_2$.
+	
+	\rule{0pt}{1cm}
+	\item Combien de nombres différents peut-on écrire avec 8 bits (c'est-à-dire un \textbf{octet}) ?
+	\item Écrire en base $2$, les nombres $10_{10}$, $17_{10}$ et $132_{10}$.
+	
+	\rule{0pt}{1cm}
+\end{enumerate}
+
+\exercice
+\begin{enumerate}
+\item \begin{enumerate}
+\item Compléter les divisions euclidiennes successives :
+$\begin{array}{rcl}
+	 	37&=&...\times2+...\\
+	 	18&=&...\times2+...\\
+	 	9&=&...\times2+...\\
+	 	...&=&...\times2+...\\
+	 	...&=&...\times2+...\\
+	 	...&=&...\times2+...
+	 \end{array}$
+\item En déduire que $37=((((((2\times0+1)\times2+0)\times2+0)
+\times2+1)\times2+0)\times2+1$, puis l'écriture en base $2$ de $37_{10}$.
+\end{enumerate}
+\item Reprendre le travail précédent pour écrire $147_{10}$, puis $452_{10}$ en base $2$.
+\item En déduire un algorithme de conversion d'un nombre en écriture décimale en binaire.
+\end{enumerate}
+
+\subsection{Edupython : un environnement de programmation en Python pour le lycée}
+Vous trouverez cette distribution installé sur les ordinateurs du lycée. Il y a un raccourcis sur le bureau dans le dossier "Maths".
+	
+	\begin{center}
+	\includegraphics[scale=.9]{edupython.eps} 	
+	\end{center}
+	
+	Vous écrirez des commandes pour faire des essais dans la console et des scripts (programme) dans l'éditeur. Vous exécuterez le programme en cliquant sur le petit triangle vert.
+
+\exercice	
+Tester les instructions ou script suivant :
+	\setlength{\columnseprule}{1pt}
+	\begin{multicols}{2}
+	\textsf{\underline{Dans la console :}}\\
+	{%\ttfamily
+	\ \python{c = ""}
+	\python{c = c + "A"}
+	\python{c = c + "B"}
+	\python{print(c)}
+	}
+	
+	\rule{0pt}{.5cm}
+	\columnbreak
+	
+	\textsf{\underline{Avec l'éditeur :}}
+	\begin{pythons}[caption=Premier script]
+	## Un commentaire
+	mot = input("Saisir un mot : ")
+	print("voici le mot ", mot)\end{pythons}
+	\end{multicols}
+	
+	\begin{Remarque} Dans la plupart des autres langages, \textbf{un bloc d'instructions} doit être délimité par des symboles
+spécifiques (parfois même par des instructions, telles que \texttt{begin} et \texttt{end}). En \textit{C}, \textit{Java} ou encore \textit{Pascal}, par exemple, un bloc d'instructions doit être délimité par des accolades. 
+
+\begin{multicols}{2}
+\textsf{\underline{En C}}\\
+{\ttfamily
+for(int k = 0; k < 26; k++)\\
+\{\newline
+printf(k);\\
+\}}
+
+\columnbreak
+\textsf{\underline{En Pascal}}\\
+{\ttfamily
+for k := 0 to 25 do\\
+begin\\
+write(k);\\
+end;
+}
+\end{multicols}
+\smallskip\end{Remarque}
+
+{\par\hspace{1cm}\color{blue}\bclampe\ Avec Python, vous devez utiliser les sauts à la ligne et l'indentation.}
+
+\smallskip
+
+
+En contrepartie vous n'avez pas à vous préoccuper d'autres symboles délimiteurs de blocs. Tester les instructions suivantes dans la console :
+
+\textsf{\underline{En Python}}\\
+{\ttfamily
+\python{for k in range(26):}
+{...\ttfamily\ \ \ print(k)\\
+...}}
+
+\subsection{Un algorithme de conversion, notion de liste et de fonction}
+\begin{minipage}{.45\linewidth}
+\begin{algorithm}[H]\caption{Conversion binaire}\footnotesize
+\SetLine
+%$tab$ \aff $rien$; \comment{On initialise la liste $tab$ avec la liste vide}
+\Debut{
+\saisir $n$\\
+\tantque{$n\neq0$}{
+Ajouter le reste de la division euclidienne de $n$ par $2$ à la liste $L$\\
+$n$ \aff\ quotient entier de $n$ par $2$
+}
+Renverser la liste $L$\\
+\afficher{$l$}
+}
+\end{algorithm}
+\end{minipage}\hspace{5mm}
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Conversion binaire]
+n = eval(input("Saisir un nombre : "))
+L = []
+while n != 0:
+    L.append(n%2)
+    n = n // 2
+L.reverse()
+print("Voici son écriture binaire : ", L)
+\end{pythons}
+\end{minipage}
+
+Le script ci-dessus est une traduction de l'algorithme proposé en Python. Afin, de comprendre les différentes instructions utilisée, voici pour commencer une information trouvée dans la documentation Python :
+
+\begin{rubric}{Information}\sffamily
+Python connaît différents types de données combinés, utilisés pour regrouper plusieurs valeurs. La plus souple est la \textbf{liste}, qui peut être écrite comme une suite, placée entre crochets, de valeurs (éléments) séparés par des virgules. Les éléments d'une liste ne sont pas obligatoirement tous du même type, bien qu'à l'usage ce soit souvent le cas.\end{rubric}
+
+\vspace{-5mm}
+\exercice
+\begin{enumerate}
+\item \begin{enumerate}
+\item Saisir les instructions suivantes dans une console :\begin{multicols}{2}
+\python{n = input()}
+\python{print(n)}
+\python{type(n)}
+\python{n = eval(input("Hello : "))}
+\python{print(n)}
+\python{type(n)}\end{multicols}
+\item Rédiger une synthèse résumant ce que vous avez compris concernant ces instructions.
+\end{enumerate}
+\item \begin{enumerate}
+\item Saisir les instructions suivantes dans une console :
+\begin{multicols}{2}
+\python{L = []}
+\python{type(L)}
+\python{L.append(1)}
+\python{print(L)}
+\python{L.append(0)}
+\python{print(L)}
+\python{L.reverse()}
+\python{print(L)}\end{multicols}
+\item Rédiger une synthèse résumant ce que vous avez compris concernant ces instructions.
+\end{enumerate}
+\item Quel est la fonction des opérateurs \textsf{\%} et \textsf{//} en Python ?
+\end{enumerate}
+
+L'excellent livre de Gérard SWINNEN\footnote{Apprendre à programmer avec Python 3 : \url{http://inforef.be/swi/download/apprendre_python3.pdf}} propose cette introduction à la notion de fonction :
+
+\begin{rubric}{Information}\sffamily
+L'un des concepts les plus importants en programmation est celui de fonction. Les fonctions
+permettent en effet de décomposer un programme complexe en une série de sous-programmes plus
+simples, lesquels peuvent à leur tour être décomposés en fragments plus petits, et ainsi de suite.
+D'autre part, les fonctions sont réutilisables : si nous disposons d'une fonction capable de calculer
+une racine carrée, par exemple, nous pouvons l'utiliser un peu partout dans nos programmes sans
+avoir à la réécrire à chaque fois.
+\end{rubric}
+
+\subsubsection{Définir une fonction}
+\begin{center}
+\begin{minipage}{.45\linewidth}
+\begin{pythons}[caption=Définition d'une fonction]
+def nomFonction(liste de paramètres):
+    ...
+    bloc d'instructions
+    ...
+\end{pythons}
+\end{minipage}
+\end{center}
+
+
+
+\begin{Remarques}
+	\begin{itemizes}
+		\item Comme les instructions \textsf{\textbf{if}} et \textbf{\textsf{while}} que vous connaissez déjà, l'instruction \textsf{\textbf{def}} est une \textit{instruction composée}. La ligne contenant cette instruction se termine obligatoirement par un double point, lequel introduit un bloc d'instructions que vous ne devez pas oublier d'\textit{indenter}.
+		\item La fin du corps, et donc de la définition de la fonction, est indiquée par l'apparition de lignes ayant la même indentation que l'en-tête.
+		\item La liste de \textit{paramètres} spécifie quelles informations il faudra fournir en guise d'\textit{arguments}
+lorsque l'on voudra utiliser cette fonction (les parenthèses peuvent parfaitement rester vides
+si la fonction ne nécessite pas d'arguments).
+	\end{itemizes}
+
+\end{Remarques}
+\subsubsection{Appeler une fonction}
+\begin{minipage}{.53\linewidth}
+Une fonction s'utilise pratiquement comme une instruction quelconque. Dans le corps d'un
+programme, un appel de fonction est constitué du nom de la fonction suivi de parenthèses.
+Si c'est nécessaire, on place dans ces parenthèses le ou les arguments que l'on souhaite transmettre à la fonction. Il faudra en principe fournir un argument pour chacun des paramètres
+spécifiés.
+\end{minipage}\hspace{3mm}
+\begin{minipage}[b]{.45\linewidth}
+\begin{pythons}[caption=Appeler une fonction]
+nomFonction(liste d'arguments)\end{pythons}
+\end{minipage}
+
+
+
+\begin{minipage}{.53\linewidth}
+Très souvent, le corps d'une fonction contient une ou plusieurs instructions de la forme :
+\end{minipage}\hspace{3mm}
+\begin{minipage}{.45\linewidth}
+\begin{pythons}[caption=Fonction retournant un objet]
+def nomFonction(liste de paramètres):
+    ...
+    bloc d'instructions
+    ...
+    return objet
+\end{pythons}
+\end{minipage}
+
+\begin{minipage}{.53\linewidth}
+Dans ce cas, l'appel de la fonction, à l'endroit où il est écrit, représente cette valeur renvoyée ; cet appel prend plutôt la forme :
+\end{minipage}\hspace{3mm}
+\begin{minipage}{.45\linewidth}
+\begin{pythons}[caption=Appeler une fonction]
+resultat = nomFonction(liste d'arguments)\end{pythons}
+\end{minipage}
+
+
+\subsubsection{Des exemples}
+\begin{minipage}{.45\linewidth}
+\begin{pythons}[caption=Table de 7]
+### Définition de la fonction ###
+def table7():
+    for n in range(1,11):
+        print(n*7)
+
+### Appel de la fonction ###
+table7()
+\end{pythons}
+\end{minipage}\hspace{5mm}
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Table quelconque et liste]
+### Définition de la fonction ###
+def table(base):
+    t = []
+    for n in range(1,11):
+        t.append(n*base)
+    return t
+    
+### Appel de la fonction ###
+print(table(13))
+\end{pythons}
+\end{minipage}
+
+\exercice
+\begin{enumerate}
+\item Tester les deux exemples précédents.
+\item En utilisant le script 2, écrire une fonction nommée \texttt{binaire}, prenant comme paramètre un nombre entier et retournant les listes des bits de sont écriture en base 2.
+\item Modifier la fonction \texttt{binaire} pour qu'elle retourne la liste des 8 bits de son écriture binaire si le nombre entier est inférieur à 256 et une liste vide sinon. \\Il faudra éventuellement ajouter des $0$...
+\end{enumerate}
+
+\subsection{Encodage des caractères}
+Chaque information étant codée par un nombre en binaire dans un ordinateur et c'est en particulier le cas des caractères utilisés dans les langues du monde entier. Le système le plus largement utilisé aujourd'hui est UTF-8 :
+\begin{rubric}{UTF-8}
+UTF-8 (abréviation de l'anglais Universal Character Set Transformation Format1 - 8 bits) est un codage de caractères informatiques conçu pour coder l'ensemble des caractères du \og répertoire universel de caractères codés\fg, il reste compatible avec la norme ASCII limitée à l'anglais de base, mais très largement répandue depuis des décennies. 
+\end{rubric}
+
+
+Voici un extrait de la table ASCII :
+
+\smallskip
+
+\begin{minipage}{13cm}
+\begin{center}
+\scalebox{.9}{\newlength{\longback}\settowidth{\longback}{\backslashbox{LSB}{MSB}}
+	\begin{tabular}{|*{10}{c|}}\hline
+		\multicolumn{2}{|c|}{\multirow{2}{*}{\backslashbox{LSB}{MSB}}}&000&001&010&011&100&101&110&111\\
+									\cline{3-10}
+									     
+		\multicolumn{2}{|c|}{}\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black}&\cellcolor{black} \\\hline
+		0000&\cellcolor{black}&NUL&DLE&SP&0&@&P&`&p\\\hline
+		0001&\cellcolor{black}&SOH&DC1&!&1&A&Q&a&q\\\hline
+		0010&\cellcolor{black}&STX&DC2&"&2&B&R&b&r\\\hline
+		0011&\cellcolor{black}&ETX&DC3&\#&3&C&S&c&s\\\hline
+		0100&\cellcolor{black}&EOT&DC4&\$&4&D&T&d&t\\\hline
+		0101&\cellcolor{black}&ENQ&NAK&\%&5&E&U&e&u\\\hline
+		0110&\cellcolor{black}&ACK&SYN&\&&6&F&V&f&v\\\hline
+		0111&\cellcolor{black}&BEL&ETB&'&7&G&W&g&w\\\hline
+		1000&\cellcolor{black}&BS&CAN&(&8&H&X&h&x\\\hline
+		1001&\cellcolor{black}&HT&EM&)&9&I&Y&i&y\\\hline
+		1010&\cellcolor{black}&LF&SUB&*&:&J&Z&j&z\\\hline
+		1011&\cellcolor{black}&VT&ESC&+&;&K&[&k&\}\\\hline
+		1100&\cellcolor{black}&FF&FS&,&<&L&$\backslash$ &l&|\\\hline
+		1101&\cellcolor{black}&CR&GS&-&=&M&]&m&\{\\\hline
+		1110&\cellcolor{black}&SO&RS&.&>&N&\textasciicircum&n&\texttildelow\\\hline
+		1111&\cellcolor{black}&SI&US&/&?&O&\textminus&o&DEL\\\hline
+									     
+									
+	\end{tabular}}
+
+\end{center}\end{minipage}\begin{minipage}{6cm}
+
+\begin{center}
+\begin{tabular}{|*{7}{c|}}
+	\multicolumn{3}{c}{} &\multicolumn{4}{c}{LSB}\\
+	\multicolumn{3}{c}{} &\multicolumn{4}{c}{4 bits}\\
+	\multicolumn{3}{c}{} &\multicolumn{4}{c}{$\overbrace{\rule{2.2cm}{0pt}}$}\\\hline
+	7&6&5&4&3&2&1\\\hline
+	\multicolumn{3}{c}{$\underbrace{\rule{1.7cm}{0pt}}$}&\multicolumn{4}{c}{}\\
+	\multicolumn{3}{c}{3 bits}&\multicolumn{4}{c}{}\\
+	\multicolumn{3}{c}{MSB}&\multicolumn{4}{c}{}
+\end{tabular}\end{center}
+
+\begin{exemple}
+	Le code ASCII de la lettre Y est $101\,1001_2$ c'est-à-dire $89_{10}$.
+\end{exemple}
+\end{minipage}
+
+\smallskip
+
+Le langage Python permet facilement de faire la correspondance entre les caractères et le nombre associé dans la table ASCII et plus généralement UTF-8 à l'aide des fonction \texttt{ord(caractère)} et \texttt{chr(nombre)}.
+
+\exercice
+ 
+ \begin{enumerate}
+ \item Pour commencer et comprendre le fonctionnement de ces fonctions, tester les instructions suivantes : 
+ \begin{multicols}{3}
+ \python{0b1011001}
+ \python{chr(89)}
+ \python{ord('Y')}
+ \python{print(chr(0b111))}
+ \python{chr(22909)}
+ \end{multicols}
+ \item Écrire une fonction nommée \texttt{encodage\_phrase} prenant en entrée une chaîne de caractère et retournant la liste des codes associés à chaque lettre composant cette chaîne.  
+ \end{enumerate}
+
+
+En utilisant successivement les deux fonctions \texttt{binaire} et \texttt{encodage\_phrase}, nous pouvons maintenant encoder un texte en une liste de nombres écris en binaire.
+
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Exercice 5 - Correction]
+def binaire(entier):
+    liste_bits =[]
+    if entier < 256:
+        while entier != 0 :
+            liste_bits.append(entier%2)
+            entier = entier//2
+        long = len(liste_bits)
+        if long <= 8:
+            for loop in range(8-long):
+                liste_bits.append(0)
+        liste_bits.reverse()
+    return liste_bits
+\end{pythons}
+\end{minipage}\hspace{7mm}
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Exercice 6 - Correction]
+def encodage_phrase(texte):
+    liste_codes = []
+    for caractere in texte:
+        liste_codes.append(ord(caractere))
+    return liste_codes
+\end{pythons}
+
+\rule{0pt}{2.9cm}
+\end{minipage}
+
+\subsection{Un petit résumé des différents types de données observés}
+\begin{multicols}{2}
+\subsubsection{Les entiers}
+Les entiers sont du type \texttt{int} :
+
+\python{n = 17}
+\python{n//5}
+\python{n\%5}
+\subsubsection{Les nombres décimaux}
+Les nombres décimaux sont codés par des \og nombres à virgule flottante\fg\ en Python du type \texttt{float} :
+
+\python{x = 35e78}
+\python{x/1000}
+\python{1/x}
+
+
+\rule{0pt}{2cm}
+
+
+\subsubsection{Les chaînes de caractères}
+Les chaînes de caractères sont du type \texttt{str}, c'est le type retourné par la fonction \texttt{input()} :
+
+\python{c = input('Hello : ')}
+\python{c = c + ' beau message'}
+\python{print(c)}
+\python{len(c)}
+\subsubsection{Les listes}
+Les listes peuvent contenir des éléments de type différent et sont du type \texttt{list} :
+
+\python{L = [1, 3.45]}
+\python{L.append('mot')}
+\python{L.reverse()}
+\python{print(L)}
+\python{print(L[2])}
+\python{len(L)}
+
+
+\end{multicols}
+\section{Le principe de l'algorithme de Merkle-Hellman}
+\subsection{Génération d'une clé privée}
+\subsubsection{Choix d'une séquence super-croissante}
+\begin{rubric}{Information}
+On dit qu'une séquence $\{a_1, a_2, ..., a_n\}$ avec $n\in\GN$ et $n\supeg3$ est \textbf{super-croissante} lorsque pour tout entier $i\in\{3,..., n\}$ :
+\[a_1+a_2+...+a_{i-1}<a_i\]
+\end{rubric}
+
+\exercice
+\begin{enumerate}
+\item Vérifier que la séquence $\{2, 7, 11, 21, 42, 89, 180, 354\}$ est super-croissante.
+\item Le script suivant permet de générer les deux premiers nombres, compris entre 1 et 50, d'une séquence super-croissante. Le compléter afin de générer une séquence super-croissante de 8 valeurs.
+
+\begin{center}
+\begin{minipage}{.5\linewidth}
+\begin{pythons}[caption=Séquence super-croissante]
+from random import *
+
+def super_croissante():
+    n = 50
+    a1 = randint(1,n)
+    a2 = randint(1,n)
+    while a2 == a1:
+        a2 = randint(1,n)
+    if a1 < a2:
+        sequence = [a1,a2]
+    else:
+        sequence = [a2,a1]\end{pythons}
+\end{minipage}
+\end{center}
+\end{enumerate}
+
+\subsubsection{Clé privée}
+\begin{rubric}{Information}
+Une \textbf{clé privée} pour cet algorithme est une liste :
+\[(N, A,\{a_1, a_2, ..., a_8\})\]
+constituée d'une séquence super-croissante $\{a_1, a_2, ..., a_8\}$ et de deux entiers $N$ et $A$ tels que :
+\[N>a_1+a_2+...+a_8\text{\hspace{1cm} et \hspace{1cm}pgcd}(A,N)=1\text{ avec 1<A<N}\]
+où \textbf{pgcd$(A,N)$} est le plus grand diviseur commun à $A$ et $N$. \\Dans le cas, où le pgcd vaut 1, on dit que les nombres $A$ et $N$ sont \textbf{premiers entre eux}.
+\end{rubric}
+
+\exercice
+\begin{enumerate}
+\item Vérifier que les nombres $N=881$ et $A=588$ conviennent avec la séquence proposée dans l'exercice précédent.
+\item Écrire une fonction nommée \texttt{cle1} prenant comme paramètre une liste super-croissante et retournant un nombre $N$ vérifiant la condition décrite ci-dessus.
+\item La fonction \texttt{pgcd} ci-dessous retourne le pgcd des entiers $a$ et $b$, avec $a\infeg b$, donnés en paramètres.
+\begin{center}
+\begin{minipage}{.5\linewidth}
+\begin{pythons}[caption=PGCD]
+def pgcd(a,b):
+    if a == 0:
+        return b
+    else:
+        return pgcd(b%a,a)
+\end{pythons}
+\end{minipage}
+\end{center}
+Cette fonction est une fonction \textbf{récursive}. La tester à la \og main\fg\ pour $a=12$ et $b=18$.
+\item Utiliser la fonction \texttt{pgcd}, pour écrire une fonction nommée \texttt{cle2} prenant comme paramètre un entier $N$ et retournant un nombre $A$ aléatoire, vérifiant les conditions décrites ci-dessus.
+\item Écrire pour terminer, une fonction nommée \texttt{cle\_privee}, utilisant les différentes fonctions définies précédemment et générant une clé privée pour l'algorithme de Merckle-Hellman.
+\end{enumerate}
+
+\newpage
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Exercice 7 - Correction]
+def super_croissante():
+    n = 50
+    a1 = randint(1,n)
+    a2 = randint(1,n)
+    while a2 == a1:
+        a2 = randint(1,n)
+    if a1 < a2:
+        sequence = [a1,a2]
+    else:
+        sequence = [a2,a1]
+    somme = a1+a2
+    for i in range(6):
+        a = somme + randint(1,n)
+        sequence.append(a)
+        somme = somme + a
+    return sequence
+\end{pythons}
+
+\rule{0pt}{.8cm}
+\end{minipage}\hspace{7mm}
+\begin{minipage}{.47\linewidth}
+\begin{pythons}[caption=Exercice 8 - Correction]
+def cle1(sequence):
+    somme = 0
+    for valeur in sequence:
+        somme = somme + valeur
+    return somme+randint(1,50)
+	
+def cle2(N):
+    A = randint(2,N)
+    while pgcd(A,N)!=1:
+        A = randint(2,N)
+    return A
+
+def cle_privee():
+    sequence = super_croissante()
+    N = cle1(sequence)
+    A = cle2(N)
+    return [N, A, sequence]
+\end{pythons}
+\end{minipage}
+
+\subsection{Génération d'une clé publique}
+\begin{rubric}{Information}
+Une \textbf{clé publique} pour cet algorithme va se générer à l'aide de la clé privée $\{N, A, \{a_1, a_2, ..., a_8\}\}$, on calcule le reste $b_i$ dans la division euclidienne par $N$ des nombres $Aa_i$ où $i\in\{1,2,...,8\}$. 
+
+La séquence $\{b_1, b_2, ..., b_8\}$ ainsi crée sera la clé publique servant à coder le message.
+\end{rubric}
+
+\exercice
+\begin{enumerate}
+\item \begin{enumerate}
+\item Avec $N=881$, $A=588$ et $a_1=2$, on a $588\times 2=1176$ et $1176=881\times1+295$. \\Quelle est la valeur $b_1$ associée ?
+\item Étant donnée la clé privée $\{881, 588, \{2, 7, 11, 21, 42, 89, 180, 354\}\}$, vérifier que la clé privée associée est $\{295, 592, 301, 14, 28, 353, 120, 236\}$.
+\end{enumerate}
+\item Écrire une fonction \texttt{cle\_publique} prenant pour argument une liste contenant une clé privée et retournant la liste contenant la séquence de la clé publique (on rappelle qu'en Python $a\%b$, donne le reste dans la division euclidienne de $a$ par $b$). 
+\end{enumerate} 
+
+\begin{center}
+\begin{minipage}{.37\linewidth}
+\begin{pythons}[caption=Exercice 9 - Correction]
+def cle_publique(cle_pr):
+    cle_pu = []
+    A = cle_pr[1]
+    N = cle_pr[0]
+    for a in cle_pr[2]:
+        cle_pu.append((A*a)%N)
+    return cle_pu\end{pythons}
+\end{minipage}
+\end{center}
+
+\subsection{Chiffrement}
+Voilà, Alice a maintenant créé ses deux clés : la clé privée qu'elle garde secrètement et la clé publique qu'elle donne à Bob pour qu'il code le message secret.
+\begin{rubric}{Information}
+Le procédé de chiffrement est le suivant : étant donné un caractère du message à crypter codé en binaire sur 8 bits : $\{w_1, w_2, ..., w_8\}$, on lui associe le nombre obtenu par le calcul suivant :
+\[c=w_1\times b_1+w_2\times b_2+...+w_8\times b_8\]
+\end{rubric}
+
+\exercice
+\begin{enumerate}
+\item Montrer que le nombre $c$ obtenu par ce procédé pour la lettre \og$a$\fg\ est $c=1129$.
+\item Écrire une fonction \texttt{codage\_lettre} prenant pour paramètres une liste contenant la clé publique et une variable contenant la lettre à coder, et retournant le nombre associé par ce procédé (vous utiliserez la fonction \texttt{binaire()} déjà programmée).
+\item Écrire une fonction \texttt{codage} prenant pour paramètres une liste contenant la clé publique et une variable contenant le texte à coder, et retournant la liste contenant les nombre associés à chacun des caractères du texte (cette fonction utilisera la fonction \texttt{codage\_lettre}.
+\end{enumerate}
+
+\begin{minipage}{.43\linewidth}
+\begin{pythons}[caption=Exercice 10 - Correction]
+def codage_lettre(cle_pu, lettre):
+    w = binaire(ord(lettre))
+    c = 0
+    i = 0
+    for b in cle_pu:
+        c = c + w[i]*b
+        i = i +1
+    return c
+	\end{pythons}
+\end{minipage}\hspace{7mm}
+\begin{minipage}{.52\linewidth}
+\begin{pythons}[caption=Exercice 10 - Correction]
+def codage(cle_pu, texte):
+    c = []
+    for lettre in texte:
+        c.append(codage_lettre(cle_pu, lettre))
+    return c
+\end{pythons}
+\end{minipage}
+
+\subsection{Déchiffrement}
+Maintenant Bob a envoyé le message codé à Alice qu'elle va devoir décoder avec sa clé privée, deux étapes vont êtres nécessaires.
+\subsubsection{Première étape}
+
+\begin{rubric}{Rappel}
+On dit qu'un nombre $B$ est l'inverse du nombre $A$ lorsque $A\times B=1$ et dans ce cas on note $B=A^{-1}$.
+\end{rubric}
+
+\begin{Remarque}
+On dira également que $B$ est l'inverse de $A$ \og modulo $N$\fg\ lorsque le reste de la division euclidienne de $A\times B$ par $N$ est $1$. 
+\end{Remarque}
+
+\begin{propriete*}[- Admise]
+Lorsque deux entiers $A$ et $N$ sont premiers entre eux alors l'entier $A$ admet un unique inverse \og modulo $N$\fg, on le notera $A^{-1}$. 
+\end{propriete*}
+
+\begin{rubric}{Information}
+Pour chacun des nombres $c$ du code, on calcule le reste $p$ dans la division euclidienne de $A^{-1}\times c$ par $N$.
+\end{rubric}
+
+\exercice
+\begin{enumerate}
+\item Montrer que le nombre $B=442$ est l'inverse du nombre $A=588$ \og modulo $N=881$\fg.
+\item Vérifier que le nombre $p$ associé au nombre $c=1129$ est  $p=372$.
+\item Écrire une fonction \texttt{inverse} prenant pour argument un entier $A$ et un entier $N$.
+\item Écrire une fonction \texttt{decodage1} prenant pour paramètres la liste contenant les nombres $\{c_1,c_2,...,c_8\}$ obtenue par le procédé de codage, ainsi que les nombres $N$ et $A$ de la clé privée et retournant la liste $\{p_1, p_2, ..., p_8\}$ des nombres obtenus par le procédé ci-dessus.
+\end{enumerate}
+
+\begin{minipage}{.43\linewidth}
+\begin{pythons}[caption=Exercice 11 - Correction]
+def inverse(A, N):
+    B = 2
+    while (B*A)%N != 1:
+        B = B + 1
+    return B
+	\end{pythons}
+\end{minipage}\hspace{7mm}
+\begin{minipage}{.52\linewidth}
+\begin{pythons}[caption=Exercice 11 - Correction]
+def decodage1(liste_c, N, A):
+    B = inverse(A,N)
+    p = []
+    for c in liste_c:
+        p.append((B*c)%N)
+    return p\end{pythons}
+\end{minipage}
+
+\subsubsection{Deuxième étape : un algorithme glouton}
+En informatique, un algorithme 
+glouton\footnote{\url{https://fr.wikipedia.org/wiki/Algorithme\_glouton}} (greedy algorithm en anglais, parfois appelé aussi algorithme gourmand) est un algorithme qui suit le principe de faire, étape par étape, un choix optimum local.
+
+\begin{Exemple}[Rendu de monnaie]
+Suivant le système de pièces, l'algorithme glouton est optimal ou pas. Dans le système de pièces européen (en centimes : 1, 2, 5, 10, 20, 50, 100, 200), où l'algorithme glouton donne la somme suivante pour 37 : $20+10+5+2$, on peut montrer que l'algorithme glouton donne toujours une solution optimale.
+\end{Exemple}
+
+\begin{rubric}{Information}
+Pour chaque valeur de $p$ obtenue à la première étape, on détermine maintenant, avec un algorithme glouton, la séquences $\{x_1,x_2,...,x_8\}$ telle que :
+\[p=x_1a_1+x_2a_2+...+x_8a_8\]où $\{a_1,a_2,...,a_8\}$ est la séquence de la clé privée.\\
+On sélectionne le $a_i$ le plus grand qui est inférieur ou égale à $p$, puis on recommence avec $p-a_i$ jusqu'à obtenir $0$.
+\end{rubric}
+ 
+ \exercice
+ \begin{enumerate}
+ \item Vérifier que la valeur $p=372$ conduit à la séquence $\{0,1,1,0,0,0,0,1\}$ qui correspond à la lettre  \og a\fg.
+ \item Écrire une fonction \texttt{decimal} prenant pour paramètre une liste de 8 bits et retournant le nombre écrit en base 10.
+ \item Écrire la fonction \texttt{decodage} prenant pour paramètres la liste $\{c_1,c_2,...,c_8\}$ envoyée par Bob ainsi que la clé privée et retournant le texte de Bob (on utilisera la fonction \texttt{decodage1} pour obtenir la liste $\{p_1,p_2,...,p_8\}$).
+ \end{enumerate}
+ 
+\begin{minipage}{.38\linewidth}
+\begin{pythons}[caption=Exercice 12 - Correction]
+def decimal(nombre_bin):
+    nombre = 0
+    n = 7
+    for b in nombre_bin:
+        nombre = nombre + b*2**n
+        n = n - 1
+    return nombre
+	\end{pythons}
+\end{minipage}\hspace{7mm}
+\begin{minipage}{.62\linewidth}
+\begin{pythons}[caption=Exercice 12 - Correction]
+def decodage(liste_c, cle_pr):
+    liste_p = decodage1(liste_c, cle_pr[0], cle_pr[1])
+    cle = cle_pr[2]
+    texte = ''
+    for p in liste_p:
+        x = [0, 0, 0, 0, 0, 0, 0, 0]
+        rang = 7
+        while p != 0:
+            if p >= cle[rang]:
+                p = p - cle[rang]
+                x[rang] = 1
+            rang = rang - 1
+        texte = texte + chr(decimal(x)) 
+    return texte
+
+\end{pythons}
+\end{minipage}
+
+		
+	
+\end{document}

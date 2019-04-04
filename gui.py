@@ -1,0 +1,112 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'gui.ui'
+#
+# Created by: PyQt5 UI code generator 5.6
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1136, 670)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        MainWindow.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(420, 10, 281, 91))
+        font = QtGui.QFont()
+        font.setPointSize(28)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.textEdit_fichier_source = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_fichier_source.setGeometry(QtCore.QRect(30, 110, 1081, 141))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.textEdit_fichier_source.setFont(font)
+        self.textEdit_fichier_source.setObjectName("textEdit_fichier_source")
+        self.label_decalage = QtWidgets.QLabel(self.centralwidget)
+        self.label_decalage.setGeometry(QtCore.QRect(40, 320, 241, 51))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_decalage.setFont(font)
+        self.label_decalage.setObjectName("label_decalage")
+        self.lineEdit_nombre_decalage = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_nombre_decalage.setGeometry(QtCore.QRect(230, 331, 61, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.lineEdit_nombre_decalage.setFont(font)
+        self.lineEdit_nombre_decalage.setObjectName("lineEdit_nombre_decalage")
+        self.textEdit_fichier_destination = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit_fichier_destination.setGeometry(QtCore.QRect(30, 380, 1081, 151))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.textEdit_fichier_destination.setFont(font)
+        self.textEdit_fichier_destination.setObjectName("textEdit_fichier_destination")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(440, 330, 151, 31))
+        self.pushButton.setObjectName("pushButton")
+        self.lineEdit_nombre_lettres_source = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_nombre_lettres_source.setGeometry(QtCore.QRect(30, 270, 1081, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.lineEdit_nombre_lettres_source.setFont(font)
+        self.lineEdit_nombre_lettres_source.setObjectName("lineEdit_nombre_lettres_source")
+        self.lineEdit_nombre_lettres_destination = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_nombre_lettres_destination.setGeometry(QtCore.QRect(30, 550, 1081, 41))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.lineEdit_nombre_lettres_destination.setFont(font)
+        self.lineEdit_nombre_lettres_destination.setObjectName("lineEdit_nombre_lettres_destination")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1136, 29))
+        self.menubar.setObjectName("menubar")
+        self.menuFichier = QtWidgets.QMenu(self.menubar)
+        self.menuFichier.setObjectName("menuFichier")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.actionOuvrir_un_fichier = QtWidgets.QAction(MainWindow)
+        self.actionOuvrir_un_fichier.setObjectName("actionOuvrir_un_fichier")
+        self.actionEnregistrer_sous = QtWidgets.QAction(MainWindow)
+        self.actionEnregistrer_sous.setObjectName("actionEnregistrer_sous")
+        self.actionQuitter = QtWidgets.QAction(MainWindow)
+        self.actionQuitter.setObjectName("actionQuitter")
+        self.menuFichier.addAction(self.actionOuvrir_un_fichier)
+        self.menuFichier.addAction(self.actionEnregistrer_sous)
+        self.menuFichier.addSeparator()
+        self.menuFichier.addAction(self.actionQuitter)
+        self.menubar.addAction(self.menuFichier.menuAction())
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "Code César"))
+        self.label_decalage.setText(_translate("MainWindow", "Choix du décalage :"))
+        self.pushButton.setText(_translate("MainWindow", "Coder / Décoder"))
+        self.menuFichier.setTitle(_translate("MainWindow", "Fichier"))
+        self.actionOuvrir_un_fichier.setText(_translate("MainWindow", "Ouvrir un fichier"))
+        self.actionEnregistrer_sous.setText(_translate("MainWindow", "Enregistrer sous ..."))
+        self.actionQuitter.setText(_translate("MainWindow", "Quitter"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+
